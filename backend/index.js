@@ -1,25 +1,23 @@
 const express = require('express');
 const cors = require('cors');
+require('dotenv').config();
+
 const app = express();
 
-// Importar rutas
+const clientesRoutes = require('./routes/clientes.routes');
 const productosRoutes = require('./routes/productos.routes');
 const usuariosRoutes = require('./routes/usuarios.routes');
-const clientesRoutes = require('./routes/clientes.routes');
+const ventasRoutes = require('./routes/ventas.routes');
 
 app.use(cors());
 app.use(express.json());
 
-// Rutas
+app.use('/api/clientes', clientesRoutes);
 app.use('/api/productos', productosRoutes);
 app.use('/api/usuarios', usuariosRoutes);
-app.use('/api/clientes', clientesRoutes);
+app.use('/api/ventas', ventasRoutes);
 
-app.get('/', (req, res) => {
-  res.json({ mensaje: 'API Sistema de Ventas - Funcionando' });
-});
-
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
-  console.log(`✅ Servidor corriendo en http://localhost:${PORT}`);
+  console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
