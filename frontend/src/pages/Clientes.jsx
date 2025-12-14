@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { clientesService } from '../services/api';
 
 function Clientes() {
     const [clientes, setClientes] = useState([]);
@@ -10,12 +11,17 @@ function Clientes() {
         direccion: ''
     });
 
-    // Simulación de datos iniciales
+    const loadClientes = async () => {
+        try {
+            const data = await clientesService.getAll();
+            setClientes(data);
+        } catch (error) {
+            console.error('Error al cargar clientes:', error);
+        }
+    };
+
     useEffect(() => {
-        setClientes([
-            { id: 1, nombre: 'Juan Pérez', email: 'juan@email.com', telefono: '123456789', direccion: 'Calle 1' },
-            { id: 2, nombre: 'María García', email: 'maria@email.com', telefono: '987654321', direccion: 'Calle 2' },
-        ]);
+        loadClientes();
     }, []);
 
     const handleInputChange = (e) => {
@@ -25,12 +31,32 @@ function Clientes() {
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Aquí se implementará la lógica para guardar el cliente
-        console.log('Nuevo cliente:', formData);
-        setShowModal(false);
-        setFormData({ nombre: '', email: '', telefono: '', direccion: '' });
+        try {
+            await clientesService.create({
+                nombre: formData.nombre,
+                email: formData.email,
+                telefono: formData.telefono,
+                direccion: formData.direccion
+            });
+            setShowModal(false);
+            setFormData({ nombre: '', email: '', telefono: '', direccion: '' });
+            loadClientes();
+        } catch (error) {
+            console.error('Error al crear cliente:', error);
+        }
+    };
+
+    const handleDelete = async (id) => {
+        if (window.confirm('¿Está seguro de eliminar este cliente?')) {
+            try {
+                await clientesService.delete(id);
+                loadClientes();
+            } catch (error) {
+                console.error('Error al eliminar cliente:', error);
+            }
+        }
     };
 
     return (
@@ -68,7 +94,12 @@ function Clientes() {
                                     <td>{cliente.direccion}</td>
                                     <td>
                                         <button className="btn btn-sm btn-warning me-2">Editar</button>
-                                        <button className="btn btn-sm btn-danger">Eliminar</button>
+                                        <button
+                                            className="btn btn-sm btn-danger"
+                                            onClick={() => handleDelete(cliente.id)}
+                                        >
+                                            Eliminar
+                                        </button>
                                     </td>
                                 </tr>
                             ))}

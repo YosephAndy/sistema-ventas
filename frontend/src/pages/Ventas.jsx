@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
+import { ventasService, clientesService, productosService } from '../services/api';
 
 function Ventas() {
     const [ventas, setVentas] = useState([]);
+    const [clientes, setClientes] = useState([]);
+    const [productos, setProductos] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [formData, setFormData] = useState({
         cliente_id: '',
@@ -10,41 +13,68 @@ function Ventas() {
         total: ''
     });
 
-    // Simulación de datos iniciales
+    const loadData = async () => {
+        try {
+            const [ventasData, clientesData, productosData] = await Promise.all([
+                ventasService.getAll(),
+                clientesService.getAll(),
+                productosService.getAll()
+            ]);
+            setVentas(ventasData);
+            setClientes(clientesData);
+            setProductos(productosData);
+        } catch (error) {
+            console.error('Error al cargar datos:', error);
+        }
+    };
+
     useEffect(() => {
-        setVentas([
-            {
-                id: 1,
-                cliente: 'Juan Pérez',
-                producto: 'Producto 1',
-                cantidad: 2,
-                total: 200,
-                fecha: '2024-12-01'
-            },
-            {
-                id: 2,
-                cliente: 'María García',
-                producto: 'Producto 2',
-                cantidad: 1,
-                total: 200,
-                fecha: '2024-12-02'
-            },
-        ]);
+        loadData();
     }, []);
 
     const handleInputChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        });
+        const { name, value } = e.target;
+
+        // Si cambia el producto o la cantidad, calcular el total automáticamente
+        if (name === 'producto_id' || name === 'cantidad') {
+            const productoId = name === 'producto_id' ? value : formData.producto_id;
+            const cantidad = name === 'cantidad' ? value : formData.cantidad;
+
+            const productoSeleccionado = productos.find(p => p.id === parseInt(productoId));
+
+            let nuevoTotal = formData.total;
+            if (productoSeleccionado && cantidad) {
+                nuevoTotal = productoSeleccionado.precio * parseInt(cantidad);
+            }
+
+            setFormData({
+                ...formData,
+                [name]: value,
+                total: nuevoTotal
+            });
+        } else {
+            setFormData({
+                ...formData,
+                [name]: value
+            });
+        }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Aquí se implementará la lógica para guardar la venta
-        console.log('Nueva venta:', formData);
-        setShowModal(false);
-        setFormData({ cliente_id: '', producto_id: '', cantidad: '', total: '' });
+        try {
+            await ventasService.create({
+                cliente_id: parseInt(formData.cliente_id),
+                producto_id: parseInt(formData.producto_id),
+                cantidad: parseInt(formData.cantidad),
+                total: parseFloat(formData.total)
+            });
+            setShowModal(false);
+            setFormData({ cliente_id: '', producto_id: '', cantidad: '', total: '' });
+            loadData();
+        } catch (error) {
+            console.error('Error al crear venta:', error);
+        }
     };
 
     return (
@@ -77,11 +107,11 @@ function Ventas() {
                             {ventas.map((venta) => (
                                 <tr key={venta.id}>
                                     <td>{venta.id}</td>
-                                    <td>{venta.cliente}</td>
-                                    <td>{venta.producto}</td>
+                                    <td>{venta.cliente_nombre || venta.cliente_id}</td>
+                                    <td>{venta.producto_nombre || venta.producto_id}</td>
                                     <td>{venta.cantidad}</td>
                                     <td>${venta.total}</td>
-                                    <td>{venta.fecha}</td>
+                                    <td>{new Date(venta.fecha_venta).toLocaleDateString()}</td>
                                     <td>
                                         <button className="btn btn-sm btn-info me-2">Ver</button>
                                         <button className="btn btn-sm btn-danger">Anular</button>
@@ -118,8 +148,11 @@ function Ventas() {
                                             required
                                         >
                                             <option value="">Seleccione un cliente</option>
-                                            <option value="1">Juan Pérez</option>
-                                            <option value="2">María García</option>
+                                            {clientes.map(cliente => (
+                                                <option key={cliente.id} value={cliente.id}>
+                                                    {cliente.nombre}
+                                                </option>
+                                            ))}
                                         </select>
                                     </div>
                                     <div className="mb-3">
@@ -132,8 +165,11 @@ function Ventas() {
                                             required
                                         >
                                             <option value="">Seleccione un producto</option>
-                                            <option value="1">Producto 1 - $100</option>
-                                            <option value="2">Producto 2 - $200</option>
+                                            {productos.map(producto => (
+                                                <option key={producto.id} value={producto.id}>
+                                                    {producto.nombre} - ${producto.precio}
+                                                </option>
+                                            ))}
                                         </select>
                                     </div>
                                     <div className="mb-3">
@@ -156,7 +192,7 @@ function Ventas() {
                                             name="total"
                                             value={formData.total}
                                             onChange={handleInputChange}
-                                            required
+                                            readOnly
                                         />
                                     </div>
                                     <div className="modal-footer">

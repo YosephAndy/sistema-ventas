@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { productosService } from '../services/api';
 
 function Productos() {
     const [productos, setProductos] = useState([]);
@@ -10,12 +11,17 @@ function Productos() {
         stock: ''
     });
 
-    // Simulación de datos iniciales
+    const loadProductos = async () => {
+        try {
+            const data = await productosService.getAll();
+            setProductos(data);
+        } catch (error) {
+            console.error('Error al cargar productos:', error);
+        }
+    };
+
     useEffect(() => {
-        setProductos([
-            { id: 1, nombre: 'Producto 1', descripcion: 'Descripción 1', precio: 100, stock: 50 },
-            { id: 2, nombre: 'Producto 2', descripcion: 'Descripción 2', precio: 200, stock: 30 },
-        ]);
+        loadProductos();
     }, []);
 
     const handleInputChange = (e) => {
@@ -25,12 +31,32 @@ function Productos() {
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Aquí se implementará la lógica para guardar el producto
-        console.log('Nuevo producto:', formData);
-        setShowModal(false);
-        setFormData({ nombre: '', descripcion: '', precio: '', stock: '' });
+        try {
+            await productosService.create({
+                nombre: formData.nombre,
+                descripcion: formData.descripcion,
+                precio: parseFloat(formData.precio),
+                stock: parseInt(formData.stock)
+            });
+            setShowModal(false);
+            setFormData({ nombre: '', descripcion: '', precio: '', stock: '' });
+            loadProductos();
+        } catch (error) {
+            console.error('Error al crear producto:', error);
+        }
+    };
+
+    const handleDelete = async (id) => {
+        if (window.confirm('¿Está seguro de eliminar este producto?')) {
+            try {
+                await productosService.delete(id);
+                loadProductos();
+            } catch (error) {
+                console.error('Error al eliminar producto:', error);
+            }
+        }
     };
 
     return (
@@ -68,7 +94,12 @@ function Productos() {
                                     <td>{producto.stock}</td>
                                     <td>
                                         <button className="btn btn-sm btn-warning me-2">Editar</button>
-                                        <button className="btn btn-sm btn-danger">Eliminar</button>
+                                        <button
+                                            className="btn btn-sm btn-danger"
+                                            onClick={() => handleDelete(producto.id)}
+                                        >
+                                            Eliminar
+                                        </button>
                                     </td>
                                 </tr>
                             ))}

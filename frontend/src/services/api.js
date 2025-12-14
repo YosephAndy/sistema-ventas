@@ -1,49 +1,93 @@
-// Archivo placeholder para servicios de API
-// Aquí se implementarán las llamadas al backend
+const API_URL = 'http://localhost:3001/api';
 
-const API_URL = 'http://localhost:3000/api';
+const handleResponse = async (response) => {
+    if (!response.ok) {
+        const error = await response.json().catch(() => ({ message: 'Error en la petición' }));
+        throw new Error(error.message || 'Error en la respuesta del servidor');
+    }
+    return response.json();
+};
 
 export const productosService = {
     getAll: async () => {
-        // Implementar llamada GET a /api/productos
+        const response = await fetch(`${API_URL}/productos`);
+        return handleResponse(response);
     },
     create: async (data) => {
-        // Implementar llamada POST a /api/productos
+        const response = await fetch(`${API_URL}/productos`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+        return handleResponse(response);
     },
     update: async (id, data) => {
-        // Implementar llamada PUT a /api/productos/:id
+        const response = await fetch(`${API_URL}/productos/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+        return handleResponse(response);
     },
     delete: async (id) => {
-        // Implementar llamada DELETE a /api/productos/:id
+        const response = await fetch(`${API_URL}/productos/${id}`, {
+            method: 'DELETE',
+        });
+        return handleResponse(response);
     }
 };
 
 export const clientesService = {
     getAll: async () => {
-        // Implementar llamada GET a /api/clientes
+        const response = await fetch(`${API_URL}/clientes`);
+        return handleResponse(response);
     },
     create: async (data) => {
-        // Implementar llamada POST a /api/clientes
+        const response = await fetch(`${API_URL}/clientes`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+        return handleResponse(response);
     },
     update: async (id, data) => {
-        // Implementar llamada PUT a /api/clientes/:id
+        const response = await fetch(`${API_URL}/clientes/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+        return handleResponse(response);
     },
     delete: async (id) => {
-        // Implementar llamada DELETE a /api/clientes/:id
+        const response = await fetch(`${API_URL}/clientes/${id}`, {
+            method: 'DELETE',
+        });
+        return handleResponse(response);
     }
 };
 
 export const ventasService = {
     getAll: async () => {
-        // Implementar llamada GET a /api/ventas
+        const response = await fetch(`${API_URL}/ventas`);
+        return handleResponse(response);
     },
     create: async (data) => {
-        // Implementar llamada POST a /api/ventas
+        const response = await fetch(`${API_URL}/ventas`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+        return handleResponse(response);
     }
 };
 
 export const authService = {
     login: async (credentials) => {
-        // Implementar llamada POST a /api/auth/login
+        const response = await fetch(`${API_URL}/usuarios/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(credentials),
+        });
+        return handleResponse(response);
     }
 };
