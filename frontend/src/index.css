@@ -1,68 +1,157 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+  --primary-color: #4361ee;
+  --secondary-color: #3f37c9;
+  --success-color: #4cc9f0;
+  --info-color: #4895ef;
+  --warning-color: #f72585;
+  --danger-color: #e63946;
+  --light-bg: #f8f9fa;
+  --dark-text: #2b2d42;
+  --sidebar-width: 260px;
+  --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --transition-speed: 0.3s;
 }
 
 body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+  background-color: var(--light-bg);
+  color: var(--dark-text);
+  -webkit-font-smoothing: antialiased;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  color: #1a1a1a;
 }
 
-button {
+/* Cards */
+.card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+  transition: transform var(--transition-speed) ease;
+  background: white;
+  margin-bottom: 20px;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+
+.card-header {
+  background-color: white;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  padding: 1.5rem;
+  font-weight: 600;
+}
+
+/* Buttons */
+.btn {
   border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
+  padding: 0.5rem 1.2rem;
   font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  transition: all 0.2s;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+}
+
+/* Tables */
+.table {
+  vertical-align: middle;
+}
+
+.table thead th {
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #e9ecef;
+  color: #6c757d;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  padding: 1rem;
+}
+
+.table td {
+  padding: 1rem;
+  color: #495057;
+}
+
+/* Inputs */
+.form-control, .form-select {
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  border-color: #dee2e6;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.15);
+}
+
+/* Sidebar Specifics */
+.sidebar-link {
+  border-radius: 8px;
+  margin: 4px 16px;
+  padding: 12px 16px;
+  color: #6c757d;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.sidebar-link:hover {
+  background-color: rgba(67, 97, 238, 0.1);
+  color: var(--primary-color);
+}
+
+.sidebar-link.active {
+  background-color: var(--primary-color);
+  color: white;
+  box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+}
+
+.sidebar-link i {
+  font-size: 1.2rem;
+  margin-right: 12px;
+}
+
+/* Navbar Enhancements */
+.main-navbar {
+  background: white !important;
+  box-shadow: 0 2px 15px rgba(0,0,0,0.04);
+  padding: 1rem 1.5rem;
+}
+
+.main-navbar .navbar-brand {
+  color: var(--primary-color) !important;
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+/* Modal Polish */
+.modal-content {
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.modal-header {
+  border-bottom: 1px solid #f1f3f5;
+  padding: 1.5rem;
+}
+
+.modal-footer {
+  border-top: 1px solid #f1f3f5;
+  padding: 1.5rem;
 }

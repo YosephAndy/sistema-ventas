@@ -6,13 +6,14 @@ function Layout({ children }) {
     return (
         <>
             <Navbar />
-            <div className="d-flex">
+            <div className="d-flex" style={{ paddingTop: '72px' }}>
                 <Sidebar />
-                <main className="container-fluid my-4 flex-grow-1">
-                    {children}
+                <main className="flex-grow-1 p-4" style={{ minHeight: 'calc(100vh - 72px)', marginLeft: 'var(--sidebar-width)' }}>
+                    <div className="container-fluid" style={{ maxWidth: '1600px' }}>
+                        {children}
+                    </div>
                 </main>
             </div>
-            <Footer />
         </>
     );
 }

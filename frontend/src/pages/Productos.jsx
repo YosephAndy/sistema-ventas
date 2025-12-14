@@ -62,56 +62,98 @@ function Productos() {
     return (
         <div>
             <div className="d-flex justify-content-between align-items-center mb-4">
-                <h1>Gestión de Productos</h1>
+                <div>
+                    <h2 className="mb-1">Productos</h2>
+                    <p className="text-muted m-0">Gestiona tu inventario de productos</p>
+                </div>
                 <button
-                    className="btn btn-primary"
+                    className="btn btn-primary d-flex align-items-center gap-2"
                     onClick={() => setShowModal(true)}
                 >
+                    <i className="bi bi-plus-lg"></i>
                     Nuevo Producto
                 </button>
             </div>
 
-            <div className="card">
-                <div className="card-body">
-                    <table className="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Nombre</th>
-                                <th>Descripción</th>
-                                <th>Precio</th>
-                                <th>Stock</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {productos.map((producto) => (
-                                <tr key={producto.id}>
-                                    <td>{producto.id}</td>
-                                    <td>{producto.nombre}</td>
-                                    <td>{producto.descripcion}</td>
-                                    <td>${producto.precio}</td>
-                                    <td>{producto.stock}</td>
-                                    <td>
-                                        <button className="btn btn-sm btn-warning me-2">Editar</button>
-                                        <button
-                                            className="btn btn-sm btn-danger"
-                                            onClick={() => handleDelete(producto.id)}
-                                        >
-                                            Eliminar
-                                        </button>
-                                    </td>
+            <div className="card border-0 shadow-sm">
+                <div className="card-header bg-transparent py-3">
+                    <div className="row g-3 align-items-center">
+                        <div className="col-md-4">
+                            <div className="input-group">
+                                <span className="input-group-text bg-light border-end-0">
+                                    <i className="bi bi-search text-muted"></i>
+                                </span>
+                                <input type="text" className="form-control bg-light border-start-0" placeholder="Buscar productos..." />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="card-body p-0">
+                    <div className="table-responsive">
+                        <table className="table table-hover align-middle mb-0">
+                            <thead className="table-light">
+                                <tr>
+                                    <th className="ps-4">Nombre</th>
+                                    <th>Descripción</th>
+                                    <th>Precio</th>
+                                    <th>Stock</th>
+                                    <th>Estado</th>
+                                    <th className="text-end pe-4">Acciones</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {productos.map((producto) => (
+                                    <tr key={producto.id}>
+                                        <td className="ps-4">
+                                            <div className="d-flex align-items-center">
+                                                <div className="bg-light rounded p-2 me-3">
+                                                    <i className="bi bi-box-seam text-primary"></i>
+                                                </div>
+                                                <span className="fw-bold">{producto.nombre}</span>
+                                            </div>
+                                        </td>
+                                        <td><span className="text-muted">{producto.descripcion}</span></td>
+                                        <td className="fw-bold">${producto.precio}</td>
+                                        <td>
+                                            <span className={`badge ${producto.stock > 10 ? 'bg-success' : 'bg-warning'} bg-opacity-10 text-${producto.stock > 10 ? 'success' : 'warning'} px-3 py-2 rounded-pill`}>
+                                                {producto.stock} uds
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span className="badge bg-success bg-opacity-10 text-success px-2 py-1 rounded">Activo</span>
+                                        </td>
+                                        <td className="text-end pe-4">
+                                            <button className="btn btn-light btn-sm me-2 text-primary" title="Editar">
+                                                <i className="bi bi-pencil"></i>
+                                            </button>
+                                            <button
+                                                className="btn btn-light btn-sm text-danger"
+                                                title="Eliminar"
+                                                onClick={() => handleDelete(producto.id)}
+                                            >
+                                                <i className="bi bi-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                                {productos.length === 0 && (
+                                    <tr>
+                                        <td colSpan="6" className="text-center py-5 text-muted">
+                                            <i className="bi bi-inbox fs-1 d-block mb-3"></i>
+                                            No hay productos registrados
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
             {/* Modal para nuevo producto */}
             {showModal && (
                 <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-                    <div className="modal-dialog">
+                    <div className="modal-dialog modal-dialog-centered">
                         <div className="modal-content">
                             <div className="modal-header">
                                 <h5 className="modal-title">Nuevo Producto</h5>
@@ -121,65 +163,75 @@ function Productos() {
                                     onClick={() => setShowModal(false)}
                                 ></button>
                             </div>
-                            <div className="modal-body">
-                                <form onSubmit={handleSubmit}>
+                            <form onSubmit={handleSubmit}>
+                                <div className="modal-body p-4">
                                     <div className="mb-3">
-                                        <label className="form-label">Nombre</label>
+                                        <label className="form-label fw-bold small text-uppercase text-muted">Nombre del Producto</label>
                                         <input
                                             type="text"
-                                            className="form-control"
+                                            className="form-control form-control-lg"
                                             name="nombre"
                                             value={formData.nombre}
                                             onChange={handleInputChange}
+                                            placeholder="Ej. Laptop Gamer"
                                             required
                                         />
                                     </div>
                                     <div className="mb-3">
-                                        <label className="form-label">Descripción</label>
+                                        <label className="form-label fw-bold small text-uppercase text-muted">Descripción</label>
                                         <textarea
                                             className="form-control"
                                             name="descripcion"
+                                            rows="3"
                                             value={formData.descripcion}
                                             onChange={handleInputChange}
+                                            placeholder="Detalles del producto..."
                                             required
                                         ></textarea>
                                     </div>
-                                    <div className="mb-3">
-                                        <label className="form-label">Precio</label>
-                                        <input
-                                            type="number"
-                                            className="form-control"
-                                            name="precio"
-                                            value={formData.precio}
-                                            onChange={handleInputChange}
-                                            required
-                                        />
+                                    <div className="row">
+                                        <div className="col-md-6 mb-3">
+                                            <label className="form-label fw-bold small text-uppercase text-muted">Precio</label>
+                                            <div className="input-group">
+                                                <span className="input-group-text">$</span>
+                                                <input
+                                                    type="number"
+                                                    className="form-control"
+                                                    name="precio"
+                                                    value={formData.precio}
+                                                    onChange={handleInputChange}
+                                                    placeholder="0.00"
+                                                    required
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="col-md-6 mb-3">
+                                            <label className="form-label fw-bold small text-uppercase text-muted">Stock Inicial</label>
+                                            <input
+                                                type="number"
+                                                className="form-control"
+                                                name="stock"
+                                                value={formData.stock}
+                                                onChange={handleInputChange}
+                                                placeholder="0"
+                                                required
+                                            />
+                                        </div>
                                     </div>
-                                    <div className="mb-3">
-                                        <label className="form-label">Stock</label>
-                                        <input
-                                            type="number"
-                                            className="form-control"
-                                            name="stock"
-                                            value={formData.stock}
-                                            onChange={handleInputChange}
-                                            required
-                                        />
-                                    </div>
-                                    <div className="modal-footer">
-                                        <button
-                                            type="button"
-                                            className="btn btn-secondary"
-                                            onClick={() => setShowModal(false)}
-                                        >
-                                            Cancelar
-                                        </button>
-                                        <button type="submit" className="btn btn-primary">
-                                            Guardar
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
+                                </div>
+                                <div className="modal-footer bg-light">
+                                    <button
+                                        type="button"
+                                        className="btn btn-light"
+                                        onClick={() => setShowModal(false)}
+                                    >
+                                        Cancelar
+                                    </button>
+                                    <button type="submit" className="btn btn-primary px-4">
+                                        Guardar Producto
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
